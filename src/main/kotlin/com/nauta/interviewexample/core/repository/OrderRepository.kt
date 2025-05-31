@@ -4,5 +4,5 @@ import com.nauta.interviewexample.core.model.Order
 
 interface OrderRepository {
     fun findByPurchase(purchase: String): Order?
-    fun create(purchase: String): Order
+    fun saveAll(orders: Set<Order>)
 }

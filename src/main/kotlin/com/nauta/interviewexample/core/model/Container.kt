@@ -1,5 +1,6 @@
 package com.nauta.interviewexample.core.model
 
+import com.nauta.interviewexample.util.UUIDExtensions.fromSeed
 import java.util.UUID
 
 data class Container internal constructor(
@@ -9,7 +10,7 @@ data class Container internal constructor(
     companion object {
         fun create(code: String): Container {
             return Container(
-                id = UUID.fromString(code),
+                id = fromSeed(code),
                 code = code
             )
         }

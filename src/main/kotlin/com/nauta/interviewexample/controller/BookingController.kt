@@ -3,6 +3,7 @@ package com.nauta.interviewexample.controller
 import org.springframework.web.bind.annotation.*
 import org.springframework.http.ResponseEntity
 import com.nauta.interviewexample.core.action.EmailRegisterAction
+import java.util.*
 
 @RestController
 @RequestMapping("/api")
@@ -27,19 +28,6 @@ data class EmailRequest(
     val orders: List<OrderDTO>
 )
 
-fun EmailRequest.toActionData(clientId: String): EmailRegisterAction.ActionData =
-    EmailRegisterAction.ActionData(
-        booking = booking,
-        containers = containers.map { it.container },
-        orders = orders.map { order ->
-            EmailRegisterAction.OrderData(
-                purchase = order.purchase,
-                invoices = order.invoices.map { it.invoice }
-            )
-        },
-        clientId = clientId
-    )
-
 data class ContainerDTO(
     val container: String
 )
@@ -52,3 +40,16 @@ data class OrderDTO(
 data class InvoiceDTO(
     val invoice: String
 )
+
+fun EmailRequest.toActionData(clientId: String): EmailRegisterAction.ActionData =
+    EmailRegisterAction.ActionData(
+        booking = booking,
+        containers = containers.map { it.container },
+        orders = orders.map { order ->
+            EmailRegisterAction.OrderData(
+                purchase = order.purchase,
+                invoices = order.invoices.map { it.invoice }
+            )
+        },
+        clientId = UUID.fromString(clientId)
+    )
