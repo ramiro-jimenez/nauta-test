@@ -29,8 +29,8 @@ class EmailController(
 
 data class EmailRequest(
     @field:NotBlank val booking: String,
-    val containers: List<ContainerDTO>?,
-    val orders: List<OrderDTO>?
+    @field:Valid val containers: List<ContainerDTO>?,
+    @field:Valid val orders: List<OrderDTO>?
 )
 
 data class ContainerDTO(
@@ -39,7 +39,7 @@ data class ContainerDTO(
 
 data class OrderDTO(
     @field:NotBlank val purchase: String,
-    val invoices: List<InvoiceDTO>
+    @field:Valid val invoices: List<InvoiceDTO>
 )
 
 data class InvoiceDTO(
