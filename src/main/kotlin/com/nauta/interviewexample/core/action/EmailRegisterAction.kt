@@ -4,36 +4,26 @@ import com.nauta.interviewexample.core.model.Booking
 import com.nauta.interviewexample.core.model.Container
 import com.nauta.interviewexample.core.model.Invoice
 import com.nauta.interviewexample.core.model.Order
-import com.nauta.interviewexample.core.service.BookingService
-import com.nauta.interviewexample.core.repository.ContainerRepository
-import com.nauta.interviewexample.core.repository.InvoiceRepository
-import com.nauta.interviewexample.core.repository.OrderRepository
+import com.nauta.interviewexample.core.repository.BookingRepository
 import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
 class EmailRegisterAction(
-    private val bookingService: BookingService,
-    private val containerRepository: ContainerRepository,
-    private val orderRepository: OrderRepository,
-    private val invoiceRepository: InvoiceRepository
+    private val bookingRepository: BookingRepository
 ) {
     operator fun invoke(actionData: ActionData) {
         val booking = findBooking(actionData.booking) ?: createBooking(actionData)
         val newContainers = calculateNewContainers(actionData.containers, booking)
         val newOrders = calculateNewOrders(actionData.orders, booking)
-        val newInvoices = getNewInvoices(newOrders)
 
         booking.addAllContainers(newContainers)
         booking.addAllOrders(newOrders)
 
-        containerRepository.saveAll(newContainers)
-        invoiceRepository.saveAll(newInvoices)
-        orderRepository.saveAll(newOrders)
-        bookingService.save(booking)
+        bookingRepository.saveAllChanges(booking)
     }
 
-    private fun findBooking(bookingCode: String) = bookingService.findByCode(bookingCode)
+    private fun findBooking(bookingCode: String) = bookingRepository.findByCode(bookingCode)
 
     private fun createBooking(actionData: ActionData) = Booking.create(actionData.clientId, actionData.booking)
 
@@ -51,13 +41,11 @@ class EmailRegisterAction(
         return lala
     }
 
-    private fun getNewInvoices(newOrders: Set<Order>) = newOrders.flatMap { it.invoices }
-
     data class ActionData(
+        val clientId: UUID,
         val booking: String,
         val containers: List<String>,
-        val orders: List<OrderData>,
-        val clientId: UUID
+        val orders: List<OrderData>
     )
 
     data class OrderData(

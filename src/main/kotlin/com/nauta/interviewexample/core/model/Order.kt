@@ -8,7 +8,7 @@ data class Order internal constructor(
     val clientId: UUID,
     val bookingId: UUID,
     val purchase: String,
-    val invoices: MutableSet<Invoice>
+    val invoices: MutableSet<Invoice> = mutableSetOf()
 ) {
 
     fun addInvoice(invoice: Invoice) {

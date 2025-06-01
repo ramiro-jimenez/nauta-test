@@ -12,20 +12,24 @@ import org.springframework.context.annotation.Configuration
 class DatabaseConfiguration {
 
     @Bean
-    fun initDatabase() = ApplicationRunner {
-        Database.connect(
+    fun database(): Database {
+        return Database.connect(
             url = "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1",
             driver = "org.h2.Driver",
             user = "sa",
             password = ""
         )
-        transaction {
+    }
+
+    @Bean
+    fun initDatabaseSchema(database: Database) = ApplicationRunner {
+        transaction(database) {
             SchemaUtils.create(
                 BookingTable,
                 BookingContainerTable,
                 ContainerTable,
-                OrderTable,
-                InvoiceTable)
+                InvoiceTable,
+                OrderTable,)
         }
     }
 }

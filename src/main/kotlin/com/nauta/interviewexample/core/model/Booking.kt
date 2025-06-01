@@ -7,8 +7,8 @@ data class Booking internal constructor(
     val id: UUID,
     val clientId: UUID,
     val code: String,
-    val containers: MutableSet<Container>,
-    val orders: MutableSet<Order>
+    val containers: MutableSet<Container> = mutableSetOf(),
+    val orders: MutableSet<Order> = mutableSetOf()
 ) {
 
     fun addAllContainers(value: Set<Container>) {

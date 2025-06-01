@@ -9,5 +9,5 @@ object InvoiceTable: UUIDTable(
     val clientId = uuid("client_id").index()
     val booking = reference("booking_id", BookingTable).index()
     val order = reference("order_id", OrderTable).index()
-    val purchase = varchar("purchase", 50).uniqueIndex()
+    val code = varchar("code", 50).uniqueIndex()
 }
