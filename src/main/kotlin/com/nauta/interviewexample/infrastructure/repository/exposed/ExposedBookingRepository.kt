@@ -5,12 +5,11 @@ import com.nauta.interviewexample.core.repository.BookingRepository
 import com.nauta.interviewexample.core.repository.ContainerRepository
 import com.nauta.interviewexample.core.repository.OrderRepository
 import com.nauta.interviewexample.infrastructure.repository.exposed.table.BookingTable
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.selectAll
+import com.nauta.interviewexample.infrastructure.repository.exposed.table.OrderTable
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.upsert
 import org.springframework.stereotype.Repository
+import java.util.*
 
 @Repository
 class ExposedBookingRepository(
@@ -42,6 +41,20 @@ class ExposedBookingRepository(
             }
             containerRepository.saveAllForBooking(booking.id, booking.containers)
             orderRepository.saveAllForBooking(booking.orders)
+        }
+    }
+
+    override fun findBookingIdByPurchaseId(purchaseId: String, clientId: UUID): UUID? {
+        return transaction(database) {
+            (BookingTable innerJoin OrderTable)
+                .select(BookingTable.id)
+                .withDistinct(true)
+                .where {
+                    (BookingTable.clientId eq clientId) and
+                    (OrderTable.purchase eq purchaseId)
+                }
+                .map { row -> row[BookingTable.id].value }
+                .singleOrNull()
         }
     }
 

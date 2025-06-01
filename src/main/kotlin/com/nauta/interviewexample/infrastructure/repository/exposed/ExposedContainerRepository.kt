@@ -27,6 +27,7 @@ class ExposedContainerRepository(private val database: Database) : ContainerRepo
     override fun saveAllForBooking(bookingId: UUID, containers: Set<Container>) {
         transaction(database) {
             saveNotExistingContainers(bookingId, containers)
+            saveBookingContainers(containers, bookingId)
         }
     }
 
@@ -40,7 +41,6 @@ class ExposedContainerRepository(private val database: Database) : ContainerRepo
 
             if (newContainers.isNotEmpty()) {
                 saveAll(newContainers)
-                saveBookingContainers(containers, bookingId)
             }
         }
     }

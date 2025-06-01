@@ -6,4 +6,5 @@ import java.util.*
 interface OrderRepository {
     fun saveAllForBooking(orders: Set<Order>)
     fun findByBookingId(bookingId: UUID): Set<Order>
+    fun findByClientId(clientId: UUID): Set<Order>
 }

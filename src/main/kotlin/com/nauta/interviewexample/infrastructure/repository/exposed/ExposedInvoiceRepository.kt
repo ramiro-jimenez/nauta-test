@@ -27,6 +27,22 @@ class ExposedInvoiceRepository(
         }
     }
 
+    override fun findByClientId(clientId: UUID): Set<Invoice> {
+        return transaction(database) {
+            InvoiceTable.selectAll()
+                .where { InvoiceTable.clientId eq clientId }
+                .map { row -> toInvoice(row) }.toSet()
+        }
+    }
+
+    override fun findByOrderId(orderId: UUID): Set<Invoice> {
+        return transaction(database) {
+            InvoiceTable.selectAll()
+                .where { InvoiceTable.order eq orderId }
+                .map { row -> toInvoice(row) }.toSet()
+        }
+    }
+
     override fun saveAll(invoices: List<Invoice>) {
         transaction(database) {
             InvoiceTable.batchUpsert(invoices, shouldReturnGeneratedValues = false) { invoice ->

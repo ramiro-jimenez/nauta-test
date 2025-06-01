@@ -15,6 +15,10 @@ data class Order internal constructor(
         invoices.add(invoice)
     }
 
+    fun addAllInvoices(value: Set<Invoice>) {
+        invoices.addAll(value)
+    }
+
     companion object {
         fun create(
             clientId: UUID,

@@ -29,6 +29,16 @@ class ExposedOrderRepository(
         }
     }
 
+    override fun findByClientId(clientId: UUID): Set<Order> {
+        val invoices = invoiceRepository.findByClientId(clientId)
+        return transaction(database) {
+            OrderTable.selectAll()
+                .where { OrderTable.clientId eq clientId }
+                .map { row -> toOrder(row, invoices) }.toSet()
+
+        }
+    }
+
     override fun saveAllForBooking(orders: Set<Order>) {
         transaction(database) {
             saveNotExistingOrders(orders)
@@ -62,13 +72,16 @@ class ExposedOrderRepository(
     }
 
     private fun toOrder(
-        row: ResultRow,
-        invoices: Set<Invoice>
+        row: ResultRow
     ) = Order(
         id = row[OrderTable.id].value,
         clientId = row[OrderTable.clientId],
         bookingId = row[OrderTable.booking].value,
-        purchase = row[OrderTable.purchase],
-        invoices = invoices.filter { it.orderId == row[OrderTable.id].value }.toMutableSet()
+        purchase = row[OrderTable.purchase]
     )
+
+    private fun toOrder(
+        row: ResultRow,
+        invoices: Set<Invoice>
+    ) = toOrder(row).also { order -> order.addAllInvoices(invoices.filter { inv -> inv.orderId == order.id }.toSet()) }
 }
