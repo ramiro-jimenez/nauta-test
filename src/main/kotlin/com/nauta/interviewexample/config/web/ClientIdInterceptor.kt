@@ -3,6 +3,7 @@ package com.nauta.interviewexample.config.web
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.web.servlet.HandlerInterceptor
+import java.util.*
 
 class ClientIdInterceptor : HandlerInterceptor {
     override fun preHandle(
@@ -11,14 +12,16 @@ class ClientIdInterceptor : HandlerInterceptor {
         handler: Any
     ): Boolean {
         val uri = request.requestURI
-        if (
-            uri.startsWith("/swagger-ui") ||
-            uri.startsWith("/v3/api-docs") ||
-            uri.startsWith("/swagger-resources") ||
-            uri.startsWith("/webjars")
-        ) {
-            return true
+        if (uri.startsWith("/api")) {
+            return validateClientId(request, response)
         }
+        return true
+    }
+
+    private fun validateClientId(
+        request: HttpServletRequest,
+        response: HttpServletResponse
+    ): Boolean {
         val clientId = request.getHeader("X-Client-ID")
         if (clientId.isNullOrBlank()) {
             response.status = HttpServletResponse.SC_BAD_REQUEST
@@ -28,7 +31,7 @@ class ClientIdInterceptor : HandlerInterceptor {
             return false
         }
         try {
-            java.util.UUID.fromString(clientId)
+            UUID.fromString(clientId)
         } catch (e: IllegalArgumentException) {
             response.status = HttpServletResponse.SC_BAD_REQUEST
             response.contentType = "text/plain"
