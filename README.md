@@ -41,9 +41,9 @@ This will run the tests inside the container and show the results in the console
 ## Chosen technologies
 - **Spring Boot Web**: Main framework for exposing REST APIs.
 - **Exposed**: Lightweight ORM for Kotlin, used to interact with the H2 database.
-- **H2 Database**: In-memory database for development and testing.
+- **H2 Database**: In-memory database for development and testing. [H2 Console](http://localhost:8080/h2-console)
 - **Jakarta Validation**: Input validation for DTOs and requests.
-- **Swagger (OpenAPI)**: Automatic API documentation via springdoc-openapi.
+- **Swagger (OpenAPI)**: Automatic API documentation via springdoc-openapi. [Swagger UI](http://localhost:8080/swagger-ui.html)
 - **Spring Boot Actuator**: Health and metrics endpoints for monitoring.
 - **RestControllerAdvice**: Centralized exception and error handling for responses.
 
@@ -55,6 +55,10 @@ The following diagram shows how the main business entities are modeled in this s
 
 ## Idempotent ID generation
 Business entities generate their IDs idempotently using backend-generated UUIDs. This ensures that, in case of retries or duplicates, no repeated entities are created and data integrity is maintained.
+
+## API usage examples
+
+You can find ready-to-use example requests for local testing in the [api-examples.sh](./api-examples.sh) script. This script contains curl commands to create and query bookings, containers, and orders using the API endpoints. Just run it after starting the service to quickly populate and test the API.
 
 ## Project architecture
 The project follows a modular and clean architecture:
