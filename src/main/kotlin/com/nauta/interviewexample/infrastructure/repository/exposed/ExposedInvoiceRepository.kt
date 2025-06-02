@@ -35,14 +35,6 @@ class ExposedInvoiceRepository(
         }
     }
 
-    override fun findByOrderId(orderId: UUID): Set<Invoice> {
-        return transaction(database) {
-            InvoiceTable.selectAll()
-                .where { InvoiceTable.order eq orderId }
-                .map { row -> toInvoice(row) }.toSet()
-        }
-    }
-
     override fun findByOrderIds(orderIds: Set<UUID>): Set<Invoice> {
         return transaction(database) {
             InvoiceTable.selectAll()

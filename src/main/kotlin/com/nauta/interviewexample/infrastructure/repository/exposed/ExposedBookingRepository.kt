@@ -44,20 +44,6 @@ class ExposedBookingRepository(
         }
     }
 
-    override fun findBookingIdByPurchaseId(purchaseId: String, clientId: UUID): UUID? {
-        return transaction(database) {
-            (BookingTable innerJoin OrderTable)
-                .select(BookingTable.id)
-                .withDistinct(true)
-                .where {
-                    (BookingTable.clientId eq clientId) and
-                    (OrderTable.purchase eq purchaseId)
-                }
-                .map { row -> row[BookingTable.id].value }
-                .singleOrNull()
-        }
-    }
-
     private fun toBooking(row: ResultRow) =
         Booking(
             id = row[BookingTable.id].value,

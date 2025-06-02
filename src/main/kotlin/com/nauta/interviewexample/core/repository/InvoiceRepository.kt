@@ -7,7 +7,6 @@ interface InvoiceRepository {
     fun saveAll(invoices: List<Invoice>)
     fun findByBookingId(bookingId: UUID): Set<Invoice>
     fun findByClientId(clientId: UUID): Set<Invoice>
-    fun findByOrderId(orderId: UUID): Set<Invoice>
     fun findByOrderIds(orderIds: Set<UUID>): Set<Invoice>
 
 }
