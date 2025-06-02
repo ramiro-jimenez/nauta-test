@@ -57,7 +57,7 @@ class ContainerControllerTest @Autowired constructor(
 
     @Test
     fun `should return orders for container`() {
-        val orders = setOf(Order.create(UUID.randomUUID(), UUID.randomUUID(), "PUR1"))
+        val orders = setOf(Order.create(UUID.randomUUID(), UUID.randomUUID(), "PUR1", listOf("INV1")))
         every { findOrdersForContainerIdAction.invoke("CONT1", UUID.fromString(clientId)) } returns orders
 
         mockMvc.get("/api/containers/CONT1/orders") {

@@ -40,7 +40,7 @@ class EmailRegisterActionTest {
             containers = containers,
             orders = orders
         )
-        every { bookingRepository.findByCode(bookingCode, UUID.fromString(clientId)) } returns null
+        every { bookingRepository.findByCode(bookingCode, clientId) } returns null
         val slot = slot<Booking>()
         every { bookingRepository.saveAllChanges(capture(slot)) } returns Unit
 
@@ -60,7 +60,7 @@ class EmailRegisterActionTest {
         val clientId = UUID.randomUUID()
         val bookingCode = "BOOK-2"
         val existingContainer = Container.create("CONT-1")
-        val existingOrder = Order.create(clientId, UUID.randomUUID(), "PUR-1")
+        val existingOrder = Order.create(clientId, UUID.randomUUID(), "PUR-1", listOf("INV-1"))
         val existingBooking = Booking.create(clientId, bookingCode)
         existingBooking.addAllContainers(setOf(existingContainer))
         existingBooking.addAllOrders(setOf(existingOrder))
@@ -82,7 +82,7 @@ class EmailRegisterActionTest {
             containers = containers,
             orders = orders
         )
-        every { bookingRepository.findByCode(bookingCode, UUID.fromString(clientId)) } returns existingBooking
+        every { bookingRepository.findByCode(bookingCode, clientId) } returns existingBooking
         val slot = slot<Booking>()
         every { bookingRepository.saveAllChanges(capture(slot)) } returns Unit
 

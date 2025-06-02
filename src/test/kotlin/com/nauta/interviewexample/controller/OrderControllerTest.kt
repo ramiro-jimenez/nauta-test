@@ -43,7 +43,7 @@ class OrderControllerTest @Autowired constructor(
 
     @Test
     fun `should return orders for client`() {
-        val orders = setOf(Order.create(UUID.randomUUID(), UUID.randomUUID(), "PUR1"))
+        val orders = setOf(Order.create(UUID.randomUUID(), UUID.randomUUID(), "PUR1", listOf("INV1")))
         every { findOrdersForClientAction.invoke(UUID.fromString(clientId)) } returns orders
 
         mockMvc.get("/api/orders") {

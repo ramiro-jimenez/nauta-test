@@ -26,14 +26,21 @@ data class Order internal constructor(
             clientId: UUID,
             bookingId: UUID,
             purchase: String,
-            invoices: MutableSet<Invoice> = mutableSetOf()
+            invoiceCodes: List<String>
         ): Order {
+            val orderId = fromSeed(clientId.toString() + bookingId.toString() + purchase)
             return Order(
-                id = fromSeed(clientId.toString() + bookingId.toString() + purchase),
+                id = orderId,
                 clientId = clientId,
                 bookingId = bookingId,
                 purchase = purchase,
-                invoices = invoices
+                invoices = invoiceCodes.map {
+                    Invoice.create(
+                        clientId = clientId,
+                        bookingId = bookingId,
+                        orderId = orderId,
+                        code = it)
+                }.toMutableSet()
             )
         }
     }

@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.io.PrintWriter
+import java.util.*
 
 class ClientIdInterceptorTest {
 
@@ -14,7 +15,7 @@ class ClientIdInterceptorTest {
     @Test
     fun `preHandle allows request if X-Client-ID is present`() {
         val request = mockk<HttpServletRequest> {
-            every { getHeader("X-Client-ID") } returns "test-client"
+            every { getHeader("X-Client-ID") } returns UUID.randomUUID().toString()
         }
         val response = mockk<HttpServletResponse>(relaxed = true)
         val handler = Any()
@@ -39,7 +40,7 @@ class ClientIdInterceptorTest {
         val result = interceptor.preHandle(request, response, handler)
 
         assertFalse(result)
-        verify { response.status = HttpServletResponse.SC_UNAUTHORIZED }
+        verify { response.status = HttpServletResponse.SC_BAD_REQUEST }
         verify { response.contentType = "text/plain" }
         verify { writer.write("Missing X-Client-ID header") }
         verify { writer.flush() }

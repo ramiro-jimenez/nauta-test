@@ -2,7 +2,6 @@ package com.nauta.interviewexample.core.action
 
 import com.nauta.interviewexample.core.model.Booking
 import com.nauta.interviewexample.core.model.Container
-import com.nauta.interviewexample.core.model.Invoice
 import com.nauta.interviewexample.core.model.Order
 import com.nauta.interviewexample.core.repository.BookingRepository
 import org.springframework.stereotype.Component
@@ -57,16 +56,9 @@ class EmailRegisterAction(
             val order = Order.create(
                 clientId = booking.clientId,
                 bookingId = booking.id,
-                purchase = purchase
+                purchase = purchase,
+                invoiceCodes = invoices
             )
-            invoices.forEach {
-                order.addInvoice(Invoice.create(
-                    clientId = booking.clientId,
-                    bookingId = booking.id,
-                    orderId = order.id,
-                    code = it)
-                )
-            }
             return order
         }
     }

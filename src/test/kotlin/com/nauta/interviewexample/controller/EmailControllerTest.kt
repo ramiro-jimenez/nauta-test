@@ -43,7 +43,7 @@ class EmailControllerTest @Autowired constructor(
 
         callApiEmail(body)
             .andExpect { status { isOk() } }
-            .andExpect { content { string(org.hamcrest.Matchers.containsString("Email recibido para booking")) } }
+            .andExpect { content { string(org.hamcrest.Matchers.containsString("Email processed successfully")) } }
         verify { emailRegisterAction.invoke(any()) }
     }
 
