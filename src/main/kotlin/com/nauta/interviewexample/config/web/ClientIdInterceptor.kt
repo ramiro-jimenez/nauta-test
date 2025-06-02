@@ -10,6 +10,15 @@ class ClientIdInterceptor : HandlerInterceptor {
         response: HttpServletResponse,
         handler: Any
     ): Boolean {
+        val uri = request.requestURI
+        if (
+            uri.startsWith("/swagger-ui") ||
+            uri.startsWith("/v3/api-docs") ||
+            uri.startsWith("/swagger-resources") ||
+            uri.startsWith("/webjars")
+        ) {
+            return true
+        }
         val clientId = request.getHeader("X-Client-ID")
         if (clientId.isNullOrBlank()) {
             response.status = HttpServletResponse.SC_BAD_REQUEST
