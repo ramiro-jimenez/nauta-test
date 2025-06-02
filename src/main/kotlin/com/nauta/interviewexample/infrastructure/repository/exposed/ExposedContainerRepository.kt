@@ -6,10 +6,9 @@ import com.nauta.interviewexample.core.repository.ContainerRepository
 import com.nauta.interviewexample.infrastructure.repository.exposed.table.BookingContainerTable
 import com.nauta.interviewexample.infrastructure.repository.exposed.table.BookingTable
 import com.nauta.interviewexample.infrastructure.repository.exposed.table.ContainerTable
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.batchUpsert
-import org.jetbrains.exposed.sql.selectAll
+import com.nauta.interviewexample.infrastructure.repository.exposed.table.OrderTable
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
 import java.util.*
@@ -33,6 +32,20 @@ class ExposedContainerRepository(private val database: Database) : ContainerRepo
                 .withDistinct(true)
                 .where { BookingTable.clientId eq clientId }
                 .map { toContainer(it) }.toSet()
+        }
+    }
+
+    override fun findByPurchaseId(purchaseId: String, clientId: UUID): Set<Container> {
+        return transaction(database) {
+            (OrderTable innerJoin BookingTable innerJoin BookingContainerTable innerJoin ContainerTable)
+                .select(ContainerTable.columns)
+                .withDistinct(true)
+                .where {
+                    (BookingTable.clientId eq clientId) and
+                        (OrderTable.purchase eq purchaseId)
+                }
+                .map { row -> toContainer(row) }
+                .toSet()
         }
     }
 
