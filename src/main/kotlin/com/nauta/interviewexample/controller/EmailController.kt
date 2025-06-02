@@ -3,6 +3,7 @@ package com.nauta.interviewexample.controller
 import com.nauta.interviewexample.core.action.EmailRegisterAction
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -20,11 +21,16 @@ class EmailController(
         @RequestBody @Valid request: EmailRequest,
         @RequestHeader("X-Client-ID") clientId: String
     ): ResponseEntity<String> {
-        val actionData = request.toActionData(clientId)
-        emailRegisterAction(actionData)
-        return ResponseEntity.ok("Email recibido para booking: ${request.booking} del cliente: $clientId")
+        logger.info("Received email request for booking: ${request.booking} with client ID: $clientId")
+
+        emailRegisterAction(request.toActionData(clientId))
+
+        return ResponseEntity.ok("Email processed successfully")
     }
 
+    companion object {
+        private val logger = LoggerFactory.getLogger(EmailController::class.java)
+    }
 }
 
 data class EmailRequest(

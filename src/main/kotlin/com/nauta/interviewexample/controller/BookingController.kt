@@ -2,7 +2,6 @@ package com.nauta.interviewexample.controller
 
 import com.nauta.interviewexample.core.model.Booking
 import com.nauta.interviewexample.core.repository.BookingRepository
-import org.jetbrains.exposed.sql.exposedLogger
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
