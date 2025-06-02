@@ -17,7 +17,7 @@ data class Order internal constructor(
         }
     }
 
-    fun addInvoicesForOrderId(value: Set<Invoice>) {
+    fun addInvoices(value: Set<Invoice>) {
         invoices.addAll(value.filter { inv -> inv.orderId == this.id }.toSet())
     }
 

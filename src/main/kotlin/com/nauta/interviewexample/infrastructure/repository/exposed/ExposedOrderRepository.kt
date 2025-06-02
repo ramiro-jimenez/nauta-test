@@ -55,7 +55,7 @@ class ExposedOrderRepository(
             val invoices = invoiceRepository.findByOrderIds(orderIds)
             return@transaction orders.map { order ->
                 order.also {
-                    it.addInvoicesForOrderId(invoices)
+                    it.addInvoices(invoices)
                 }
             }.toSet()
         }
@@ -105,5 +105,5 @@ class ExposedOrderRepository(
     private fun toOrder(
         row: ResultRow,
         invoices: Set<Invoice>
-    ) = toOrder(row).also { order -> order.addInvoicesForOrderId(invoices) }
+    ) = toOrder(row).also { order -> order.addInvoices(invoices) }
 }
