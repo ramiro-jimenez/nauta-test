@@ -7,17 +7,23 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.beans.factory.annotation.Value
 
 @Configuration
 class DatabaseConfiguration {
 
     @Bean
-    fun database(): Database {
+    fun database(
+        @Value("\${spring.datasource.url}") url: String,
+        @Value("\${spring.datasource.driver-class-name}") driver: String,
+        @Value("\${spring.datasource.username}") user: String,
+        @Value("\${spring.datasource.password}") password: String
+    ): Database {
         return Database.connect(
-            url = "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1",
-            driver = "org.h2.Driver",
-            user = "sa",
-            password = ""
+            url = url,
+            driver = driver,
+            user = user,
+            password = password
         )
     }
 
@@ -33,3 +39,4 @@ class DatabaseConfiguration {
         }
     }
 }
+
