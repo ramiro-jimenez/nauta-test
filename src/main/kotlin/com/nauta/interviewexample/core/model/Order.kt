@@ -12,11 +12,13 @@ data class Order internal constructor(
 ) {
 
     fun addInvoice(invoice: Invoice) {
-        invoices.add(invoice)
+        if (invoice.orderId == this.id) {
+            invoices.add(invoice)
+        }
     }
 
-    fun addAllInvoices(value: Set<Invoice>) {
-        invoices.addAll(value)
+    fun addInvoicesForOrderId(value: Set<Invoice>) {
+        invoices.addAll(value.filter { inv -> inv.orderId == this.id }.toSet())
     }
 
     companion object {

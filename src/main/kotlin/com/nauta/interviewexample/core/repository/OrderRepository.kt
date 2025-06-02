@@ -7,4 +7,5 @@ interface OrderRepository {
     fun saveAllForBooking(orders: Set<Order>)
     fun findByBookingId(bookingId: UUID): Set<Order>
     fun findByClientId(clientId: UUID): Set<Order>
+    fun findByContainerId(containerCode: String, clientId: UUID): Set<Order>
 }

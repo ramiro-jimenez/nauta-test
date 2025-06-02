@@ -1,6 +1,5 @@
 package com.nauta.interviewexample.core.action
 
-import com.nauta.interviewexample.core.action.exception.PurchaseNotFoundException
 import com.nauta.interviewexample.core.model.Container
 import com.nauta.interviewexample.core.repository.BookingRepository
 import com.nauta.interviewexample.core.repository.ContainerRepository
@@ -15,11 +14,7 @@ class FindContainersForPurchaseIdAction(
 
     operator fun invoke(purchaseId: String, clientId: UUID): Set<Container> {
         val bookingId = bookingRepository.findBookingIdByPurchaseId(purchaseId, clientId)
-            ?: throwNotFoundException(purchaseId)
+            ?: return emptySet()
         return containerRepository.findByBookingId(bookingId)
-    }
-
-    private fun throwNotFoundException(purchaseId: String): Nothing {
-        throw PurchaseNotFoundException(purchaseId)
     }
 }

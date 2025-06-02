@@ -4,11 +4,11 @@ import com.nauta.interviewexample.core.model.Invoice
 import com.nauta.interviewexample.core.model.Order
 import com.nauta.interviewexample.core.repository.InvoiceRepository
 import com.nauta.interviewexample.core.repository.OrderRepository
+import com.nauta.interviewexample.infrastructure.repository.exposed.table.BookingContainerTable
+import com.nauta.interviewexample.infrastructure.repository.exposed.table.BookingTable
+import com.nauta.interviewexample.infrastructure.repository.exposed.table.ContainerTable
 import com.nauta.interviewexample.infrastructure.repository.exposed.table.OrderTable
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.batchUpsert
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
 import java.util.*
@@ -36,6 +36,28 @@ class ExposedOrderRepository(
                 .where { OrderTable.clientId eq clientId }
                 .map { row -> toOrder(row, invoices) }.toSet()
 
+        }
+    }
+
+    override fun findByContainerId(containerCode: String, clientId: UUID): Set<Order> {
+        return transaction(database) {
+            val orders =
+                (ContainerTable innerJoin BookingContainerTable innerJoin BookingTable innerJoin OrderTable)
+                .selectAll()
+                .where {
+                    (ContainerTable.code eq containerCode) and
+                    (OrderTable.clientId eq clientId)
+                }
+                .map { row -> toOrder(row) }
+                .toSet()
+
+            val orderIds = orders.map { it.id }.toSet()
+            val invoices = invoiceRepository.findByOrderIds(orderIds)
+            return@transaction orders.map { order ->
+                order.also {
+                    it.addInvoicesForOrderId(invoices)
+                }
+            }.toSet()
         }
     }
 
@@ -83,5 +105,5 @@ class ExposedOrderRepository(
     private fun toOrder(
         row: ResultRow,
         invoices: Set<Invoice>
-    ) = toOrder(row).also { order -> order.addAllInvoices(invoices.filter { inv -> inv.orderId == order.id }.toSet()) }
+    ) = toOrder(row).also { order -> order.addInvoicesForOrderId(invoices) }
 }

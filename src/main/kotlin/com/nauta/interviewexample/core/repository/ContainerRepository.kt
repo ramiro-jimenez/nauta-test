@@ -6,4 +6,5 @@ import java.util.*
 interface ContainerRepository {
     fun saveAllForBooking(bookingId: UUID, containers: Set<Container>)
     fun findByBookingId(bookingId: UUID): Set<Container>
+    fun findByClientId(clientId: UUID): Set<Container>
 }
