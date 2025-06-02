@@ -40,7 +40,7 @@ class EmailRegisterActionTest {
             containers = containers,
             orders = orders
         )
-        every { bookingRepository.findByCode(bookingCode) } returns null
+        every { bookingRepository.findByCode(bookingCode, UUID.fromString(clientId)) } returns null
         val slot = slot<Booking>()
         every { bookingRepository.saveAllChanges(capture(slot)) } returns Unit
 
@@ -82,7 +82,7 @@ class EmailRegisterActionTest {
             containers = containers,
             orders = orders
         )
-        every { bookingRepository.findByCode(bookingCode) } returns existingBooking
+        every { bookingRepository.findByCode(bookingCode, UUID.fromString(clientId)) } returns existingBooking
         val slot = slot<Booking>()
         every { bookingRepository.saveAllChanges(capture(slot)) } returns Unit
 

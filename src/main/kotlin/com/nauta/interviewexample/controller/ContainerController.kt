@@ -1,5 +1,7 @@
 package com.nauta.interviewexample.controller
 
+import com.nauta.interviewexample.controller.response.ContainerResponse
+import com.nauta.interviewexample.controller.response.OrderResponse
 import com.nauta.interviewexample.core.action.FindContainersForClientAction
 import com.nauta.interviewexample.core.action.FindOrdersForContainerIdAction
 import com.nauta.interviewexample.core.model.Container
@@ -22,9 +24,10 @@ class ContainerController(
     @ResponseBody
     fun getContainers(
         @RequestHeader("X-Client-ID") clientId: String
-    ): ResponseEntity<Set<Container>> {
+    ): ResponseEntity<List<ContainerResponse>> {
         logger.info("Getting containers for client ID: $clientId")
-        return ResponseEntity.ok(findContainersForClientAction(UUID.fromString(clientId)))
+        val containers = findContainersForClientAction(UUID.fromString(clientId))
+        return ResponseEntity.ok(containers.map { ContainerResponse.from(it) })
     }
 
     @GetMapping("/{containerId}/orders")
@@ -32,9 +35,10 @@ class ContainerController(
     fun getContainerOrders(
         @PathVariable @NotBlank containerId: String,
         @RequestHeader("X-Client-ID") clientId: String
-    ): ResponseEntity<Set<Order>> {
+    ): ResponseEntity<List<OrderResponse>> {
         logger.info("Getting orders for containerId: $containerId and client ID: $clientId")
-        return ResponseEntity.ok(findOrdersForContainerIdAction(containerId, UUID.fromString(clientId)))
+        val orders = findOrdersForContainerIdAction(containerId, UUID.fromString(clientId))
+        return ResponseEntity.ok(orders.map { OrderResponse.from(it) })
     }
 
     companion object {

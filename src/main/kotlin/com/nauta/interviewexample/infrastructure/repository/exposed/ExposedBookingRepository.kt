@@ -5,7 +5,6 @@ import com.nauta.interviewexample.core.repository.BookingRepository
 import com.nauta.interviewexample.core.repository.ContainerRepository
 import com.nauta.interviewexample.core.repository.OrderRepository
 import com.nauta.interviewexample.infrastructure.repository.exposed.table.BookingTable
-import com.nauta.interviewexample.infrastructure.repository.exposed.table.OrderTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
@@ -18,10 +17,11 @@ class ExposedBookingRepository(
     private val orderRepository: OrderRepository
 ): BookingRepository {
 
-    override fun findByCode(code: String): Booking? {
+    override fun findByCode(code: String, clientId: UUID): Booking? {
         return transaction(database) {
             val booking = BookingTable.selectAll()
-                .where { BookingTable.code eq code }
+                .where { (BookingTable.code eq code) and
+                        (BookingTable.clientId eq clientId) }
                 .map { row -> toBooking(row) }
                 .singleOrNull()
 

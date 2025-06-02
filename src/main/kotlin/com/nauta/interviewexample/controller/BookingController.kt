@@ -1,13 +1,12 @@
 package com.nauta.interviewexample.controller
 
+import com.nauta.interviewexample.controller.response.BookingResponse
 import com.nauta.interviewexample.core.model.Booking
 import com.nauta.interviewexample.core.repository.BookingRepository
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("/api/bookings")
@@ -16,11 +15,14 @@ class BookingController(
 ) {
 
     @GetMapping("/{code}")
-    fun getBooking(@PathVariable code: String): ResponseEntity<Booking> {
-        logger.info("Fetching booking with code: $code")
-        val booking = bookingRepository.findByCode(code)
+    fun getBooking(
+        @PathVariable code: String,
+        @RequestHeader("X-Client-ID") clientId: String
+    ): ResponseEntity<BookingResponse> {
+        logger.info("Fetching booking with code: $code and client ID: $clientId")
+        val booking = bookingRepository.findByCode(code, UUID.fromString(clientId))
         return if (booking != null) {
-            ResponseEntity.ok(booking)
+            ResponseEntity.ok(BookingResponse.from(booking))
         } else {
             ResponseEntity.notFound().build()
         }

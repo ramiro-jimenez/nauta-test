@@ -13,7 +13,7 @@ class EmailRegisterAction(
     private val bookingRepository: BookingRepository
 ) {
     operator fun invoke(actionData: ActionData) {
-        val booking = findBooking(actionData.booking) ?: createBooking(actionData)
+        val booking = findBooking(actionData) ?: createBooking(actionData)
         val newContainers = calculateNewContainers(actionData.containers, booking)
         val newOrders = calculateNewOrders(actionData.orders, booking)
 
@@ -23,7 +23,8 @@ class EmailRegisterAction(
         bookingRepository.saveAllChanges(booking)
     }
 
-    private fun findBooking(bookingCode: String) = bookingRepository.findByCode(bookingCode)
+    private fun findBooking(actionData: ActionData) =
+        bookingRepository.findByCode(actionData.booking, actionData.clientId)
 
     private fun createBooking(actionData: ActionData) = Booking.create(actionData.clientId, actionData.booking)
 
